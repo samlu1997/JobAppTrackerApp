@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/" />
+  <Project Path="jobapptracker.client/jobapptracker.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="JobAppTracker.Server/JobAppTracker.Server.csproj" />
+</Solution>
