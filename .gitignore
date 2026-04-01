@@ -40,3 +40,4 @@ ops/*.retry
 # IDE
 .idea/
 .vs/
+/JobAppTracker/JobAppTracker.Server/appsettings.json
