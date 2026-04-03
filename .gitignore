@@ -40,3 +40,4 @@ ops/*.retry
 # IDE
 .idea/
 .vs/
+**/appsettings.json
