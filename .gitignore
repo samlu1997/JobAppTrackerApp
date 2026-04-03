@@ -41,3 +41,4 @@ ops/*.retry
 .idea/
 .vs/
 **/appsettings.json
+**/appsettings.Development.json
