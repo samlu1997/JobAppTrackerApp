@@ -1,5 +1,6 @@
 using Anthropic.SDK;
 using Anthropic.SDK.Messaging;
+using System.Text.Json.Serialization;
 
 namespace JobAppTracker.Server.Services
 {
@@ -17,8 +18,8 @@ namespace JobAppTracker.Server.Services
         {
             var prompt = $$"""
                 Analyse this job description and provide:
-                1. A list of the most important keywords to include in a CV
-                2. Key skills to highlight
+                1. The top 8-10 most important unique keywords to include in a CV (single words or short phrases only, no duplicates)
+                2. The top 5-6 key skills to highlight (distinct from the keywords, focus on broader competencies)
                 3. A brief cover letter draft tailored to this role
 
                 Job Description:
@@ -30,7 +31,7 @@ namespace JobAppTracker.Server.Services
                     "skills": ["skill1", "skill2"],
                     "coverLetter": "cover letter text here"
                 }
-                
+    
                 Respond with JSON only, no other text.
                 """;
 
@@ -38,11 +39,18 @@ namespace JobAppTracker.Server.Services
                 new MessageParameters
                 {
                     Messages = [new Message(RoleType.User, prompt)],
-                    Model = "claude-sonnet-4-6",
+                    Model = "claude-haiku-4-5",
                     MaxTokens = 1024
                 });
 
             var responseText = message.Content[0].ToString();
+
+            // Strip markdown code blocks if Claude wraps the response
+            responseText = responseText
+                .Replace("```json", "")
+                .Replace("```", "")
+                .Trim();
+
             var result = System.Text.Json.JsonSerializer.Deserialize<AIAnalysisResult>(responseText);
             return result;
         }
@@ -50,8 +58,13 @@ namespace JobAppTracker.Server.Services
 
     public class AIAnalysisResult
     {
+        [JsonPropertyName("keywords")]
         public List<string> Keywords { get; set; }
+
+        [JsonPropertyName("skills")]
         public List<string> Skills { get; set; }
+
+        [JsonPropertyName("coverLetter")]
         public string CoverLetter { get; set; }
     }
 }

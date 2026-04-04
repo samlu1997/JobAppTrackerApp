@@ -42,3 +42,4 @@ ops/*.retry
 .vs/
 **/appsettings.json
 **/appsettings.Development.json
+*.esproj
