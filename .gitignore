@@ -41,3 +41,5 @@ ops/*.retry
 .idea/
 .vs/
 **/appsettings.json
+/JobAppTracker/jobapptracker.client/jobapptracker.client.esproj
+/JobAppTracker/jobapptracker.client/jobapptracker.client.esproj
