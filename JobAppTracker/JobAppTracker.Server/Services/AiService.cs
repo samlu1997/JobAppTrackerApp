@@ -14,25 +14,47 @@ namespace JobAppTracker.Server.Services
             _client = new AnthropicClient(apiKey);
         }
 
-        public async Task<AIAnalysisResult> AnalyseJobDescription(string jobDescription)
+        public async Task<AIAnalysisResult> AnalyseJobDescription(string jobDescription, string cvText = "No CV provided yet")
         {
             var prompt = $$"""
-                Analyse this job description and provide:
-                1. The top 8-10 most important unique keywords to include in a CV (single words or short phrases only, no duplicates)
-                2. The top 5-6 key skills to highlight (distinct from the keywords, focus on broader competencies)
-                3. A brief cover letter draft tailored to this role
+                You are a professional CV and cover letter writer helping a job applicant apply for a role. Your goal is to produce a tailored, natural, and confident cover letter that feels like a real person wrote it, not a robot.
+
+                You will be given:
+                - The applicant's CV
+                - The job description
+
+                Rules for the cover letter:
+                - Maximum 350 words
+                - 4 paragraphs: (1) genuine interest in the specific role and company, referencing something concrete from the job description, (2) most relevant experience with at least one specific achievement or example, (3) working style and skills that match what the role asks for, (4) short confident close
+                - Mirror the language and tone of the job description naturally, do not copy it word for word
+                - Write in a confident, warm, and direct tone. Not corporate, not stiff, not overly formal
+                - Never use hyphens
+                - Never use bullet points or lists
+                - Never use the word leverage
+                - Never use clichés like "I am passionate about", "I would be a great fit", "I am excited to bring my skills", or "I thrive in"
+                - Do not mention skills or experience the applicant does not have
+                - If there is a gap in experience the job asks for, acknowledge it briefly and frame it positively without dwelling on it
+                - Avoid starting consecutive sentences with I
+                - Address it to "Dear Hiring Manager" unless a name is provided
+                - End with the applicant's name, phone number, and email taken from their CV
+
+                Rules for keywords and skills:
+                - Keywords should be single words or short phrases that would pass an ATS scan for this specific role
+                - Skills should be broader competencies distinct from the keywords
+                - Do not include anything that is not evidenced somewhere in the applicant's CV
+
+                Applicant CV:
+                {{cvText}}
 
                 Job Description:
                 {{jobDescription}}
 
-                Respond in this exact JSON format:
+                Respond in this exact JSON format with no other text:
                 {
                     "keywords": ["keyword1", "keyword2"],
                     "skills": ["skill1", "skill2"],
                     "coverLetter": "cover letter text here"
                 }
-    
-                Respond with JSON only, no other text.
                 """;
 
             var message = await _client.Messages.GetClaudeMessageAsync(
